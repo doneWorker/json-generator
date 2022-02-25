@@ -1,16 +1,42 @@
 import { useState } from "react";
 import { Container, Col, Row, Modal, Form, Button } from "react-bootstrap";
-import { MdRemoveCircleOutline } from "react-icons/md";
+import styled from "styled-components";
 
 import generate from "./generate";
+import RenderComponent from "./components/RenderComponent";
 import NumberAdditional from "./components/NumberAdditional";
 import OneOfAdditional from "./components/OneOfAdditional";
 import StringAdditional from "./components/StringAdditional";
 
+import { MdRemoveCircleOutline } from "react-icons/md";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const Component = ({ Elem, onChange }) =>
-  Elem ? <Elem onChange={onChange} /> : <></>;
+/* Styled */
+const Header = styled.header`
+  height: 50px;
+  display: flex;
+  align-items: center;
+  flex-grow: 0;
+`;
+
+const $Row = styled(Row)`
+  padding: 5px 0;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  background: white;
+`;
+
+const RemoveCol = styled(Col)`
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-basis: 50px;
+  flex-grow: 0;
+  font-size: 25px;
+  color: #ff5555;
+`;
 
 const typesToComponents = {
   number: NumberAdditional,
@@ -18,10 +44,12 @@ const typesToComponents = {
   string: StringAdditional,
 };
 
+const defaultField = { name: "", type: "id" };
+
 const GeneratorPage = () => {
   const [state, setState] = useState({
     total: 0,
-    fields: [],
+    fields: [defaultField],
   });
 
   const [generatedJSON, setGeneratedJSON] = useState("");
@@ -31,7 +59,7 @@ const GeneratorPage = () => {
   const handleAddNewField = () => {
     setState((prev) => ({
       ...prev,
-      fields: [...prev.fields, { name: "", type: "id" }],
+      fields: [...prev.fields, defaultField],
     }));
   };
 
@@ -75,18 +103,40 @@ const GeneratorPage = () => {
 
   return (
     <main>
+      <Header>
+        <Container>
+          <Row>
+            <Form.Group as={Col} xs={2}>
+              <Form.Control
+                type="number"
+                name="value"
+                placeholder="Total records"
+                required
+                value={state.total > 0 ? state.total : null}
+                onChange={(e) => handleTotalChange(parseInt(e.target.value))}
+              />
+            </Form.Group>
+            <Col>
+              <Button onClick={handleAddNewField} style={{ marginRight: 10 }}>
+                + Add new field
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setGeneratedJSON(generate(state));
+                  setModalIsOpen(true);
+                }}
+              >
+                Run!
+              </Button>
+            </Col>
+          </Row>
+        </Container>
+      </Header>
       <Container>
         <Form>
           {state.fields.map((field, idx) => (
-            <Row
-              key={idx}
-              style={{
-                background: "white",
-                padding: "5px 0",
-                margin: "5px 0",
-                border: "1px solid #ccc",
-              }}
-            >
+            <$Row key={idx}>
               <Form.Group as={Col}>
                 <Form.Label className="label">Field's name</Form.Label>
                 <Form.Control
@@ -115,59 +165,18 @@ const GeneratorPage = () => {
                 </Form.Select>
               </Form.Group>
               {
-                <Component
+                <RenderComponent
                   Elem={typesToComponents[field.type]}
                   onChange={(key, val) =>
                     handleChangeFieldAdditional(idx, key, val)
                   }
                 />
               }
-              <Col
-                style={{
-                  cursor: "pointer",
-                  flexBasis: 50,
-                  flexGrow: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#ff5555",
-                  fontSize: 25,
-                }}
-              >
+              <RemoveCol>
                 <MdRemoveCircleOutline onClick={() => handleRemoveField(idx)} />
-              </Col>
-            </Row>
+              </RemoveCol>
+            </$Row>
           ))}
-          <footer
-            style={{
-              position: "fixed",
-              bottom: 0,
-              height: 50,
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <Form.Group as={Col}>
-              <Form.Control
-                type="number"
-                name="value"
-                placeholder="Total records"
-                required
-                value={state.total > 0 ? state.total : null}
-                onChange={(e) => handleTotalChange(parseInt(e.target.value))}
-              />
-            </Form.Group>
-            <Button onClick={handleAddNewField}>+Add new field</Button>
-            <Button
-              variant="primary"
-              onClick={() => {
-                setGeneratedJSON(generate(state));
-                setModalIsOpen(true);
-              }}
-            >
-              Run!
-            </Button>
-          </footer>
         </Form>
       </Container>
       <Modal scrollable show={modalIsOpen} onHide={() => setModalIsOpen(false)}>
