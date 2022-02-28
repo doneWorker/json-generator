@@ -11,6 +11,7 @@ import StringAdditional from "./components/StringAdditional";
 import { MdRemoveCircleOutline } from "react-icons/md";
 
 import "bootstrap/dist/css/bootstrap.min.css";
+import ResultModal from "./components/ResultModal";
 
 /* Styled */
 const Header = styled.header`
@@ -179,19 +180,11 @@ const GeneratorPage = () => {
           ))}
         </Form>
       </Container>
-      <Modal scrollable show={modalIsOpen} onHide={() => setModalIsOpen(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Generated JSON</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <pre>{generatedJSON}</pre>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={() => setModalIsOpen(false)}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <ResultModal
+        isOpen={modalIsOpen}
+        generatedJSON={generatedJSON}
+        onClose={() => setModalIsOpen(false)}
+      />
     </main>
   );
 };
