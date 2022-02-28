@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { cloneDeep } from "lodash";
 import { Container, Col, Row, Form, Button } from "react-bootstrap";
 import styled from "styled-components";
 import { nanoid } from "nanoid";
@@ -17,6 +18,29 @@ const Header = styled.header`
   flex-grow: 0;
 `;
 
+/* Helpers */
+const findField = (fields, id) => {
+  for (let field of fields) {
+    if (field.id === id) return field;
+
+    if (field.children) {
+      const result = findField(field.children, id);
+      if (result) return result;
+    }
+  }
+};
+
+const removeField = (fields, id) => {
+  for (let index in fields) {
+    if (fields[index].id === id) {
+      fields.splice(index, 1);
+      return;
+    } else if (fields[index].children) {
+      removeField(fields[index].children, id);
+    }
+  }
+};
+
 const createDefaultField = () => ({ name: "", type: "id", id: nanoid() });
 
 const GeneratorPage = () => {
@@ -30,56 +54,45 @@ const GeneratorPage = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const handleAddNewField = () => {
-    setState((prev) => ({
-      ...prev,
-      fields: [...prev.fields, createDefaultField()],
-    }));
+    setState((prev) => {
+      const newState = cloneDeep(prev);
+      newState.fields.push(createDefaultField());
+
+      return newState;
+    });
   };
 
   const handleChangeFieldType = (id, type) => {
-    setState((prev) => ({
-      ...prev,
-      fields: prev.fields.map((field) =>
-        field.id === id ? { name: field.name, type } : field
-      ),
-    }));
+    setState((prev) => {
+      const newState = cloneDeep(prev);
+      const found = findField(newState.fields, id);
+      found.type = type;
+
+      return newState;
+    });
   };
 
-  // TODO: decompose
   const handleChangeFieldAdditional = (id, key, val) => {
     setState((prev) => {
       const addFieldKey = "add-to-object";
 
-      const changeKeyMapper = (field) =>
-        field.id === id ? { ...field, [key]: val } : field;
+      const newState = cloneDeep(prev);
+      const found = findField(newState.fields, id);
+      key === addFieldKey
+        ? (found.children = [...(found.children || []), createDefaultField()])
+        : (found[key] = val);
 
-      const addFieldMapper = (field) =>
-        field.id === id
-          ? {
-              ...field,
-              children: field.children
-                ? [...field.children, createDefaultField()]
-                : [createDefaultField()],
-            }
-          : field;
-
-      const mapper = key === addFieldKey ? addFieldMapper : changeKeyMapper;
-
-      return {
-        ...prev,
-        fields: prev.fields.map(mapper),
-      };
+      return newState;
     });
   };
 
   const handleChangeFieldName = (id, name) => {
     setState((prev) => {
-      return {
-        ...prev,
-        fields: prev.fields.map((field) =>
-          field.id === id ? { ...field, name } : field
-        ),
-      };
+      const newState = cloneDeep(prev);
+      const found = findField(newState.fields, id);
+      found.name = name;
+
+      return newState;
     });
   };
 
@@ -88,10 +101,11 @@ const GeneratorPage = () => {
   };
 
   const handleRemoveField = (id) => {
-    setState((prev) => ({
-      ...prev,
-      fields: prev.fields.filter((field) => field.id !== id),
-    }));
+    setState((prev) => {
+      const newState = cloneDeep(prev);
+      removeField(newState.fields, id);
+      return newState;
+    });
   };
 
   return (

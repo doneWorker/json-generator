@@ -30,19 +30,26 @@ const generateField = (params) => {
   return [name, val];
 };
 
+const generateRecord = (fields) => {
+  const obj = {};
+  fields.forEach((field) => {
+    if (field.type === "object") {
+      obj[field.name] = generateRecord(field.children);
+    } else {
+      const [name, val] = generateField(field);
+      obj[name] = val;
+    }
+  });
+
+  return obj;
+};
+
 const generate = (config) => {
   const { fields } = config;
   const { total } = config;
   const result = [];
 
-  for (let i = 0; i < total; i++) {
-    const obj = {};
-    fields.forEach((field) => {
-      const [name, val] = generateField(field);
-      obj[name] = val;
-    });
-    result.push(obj);
-  }
+  for (let i = 0; i < total; i++) result.push(generateRecord(fields));
 
   return JSON.stringify(result, null, "\t");
 };
