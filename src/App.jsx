@@ -1,17 +1,12 @@
 import { useState } from "react";
-import { Container, Col, Row, Modal, Form, Button } from "react-bootstrap";
+import { Container, Col, Row, Form, Button } from "react-bootstrap";
 import styled from "styled-components";
 
 import generate from "./generate";
-import RenderComponent from "./components/RenderComponent";
-import NumberAdditional from "./components/NumberAdditional";
-import OneOfAdditional from "./components/OneOfAdditional";
-import StringAdditional from "./components/StringAdditional";
-
-import { MdRemoveCircleOutline } from "react-icons/md";
+import ResultModal from "./components/ResultModal";
+import Field from "./components/Field";
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import ResultModal from "./components/ResultModal";
 
 /* Styled */
 const Header = styled.header`
@@ -20,30 +15,6 @@ const Header = styled.header`
   align-items: center;
   flex-grow: 0;
 `;
-
-const $Row = styled(Row)`
-  padding: 5px 0;
-  margin: 5px 0;
-  border: 1px solid #ccc;
-  background: white;
-`;
-
-const RemoveCol = styled(Col)`
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-basis: 50px;
-  flex-grow: 0;
-  font-size: 25px;
-  color: #ff5555;
-`;
-
-const typesToComponents = {
-  number: NumberAdditional,
-  oneof: OneOfAdditional,
-  string: StringAdditional,
-};
 
 const defaultField = { name: "", type: "id" };
 
@@ -137,46 +108,15 @@ const GeneratorPage = () => {
       <Container>
         <Form>
           {state.fields.map((field, idx) => (
-            <$Row key={idx}>
-              <Form.Group as={Col}>
-                <Form.Label className="label">Field's name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="name"
-                  required
-                  value={field.name}
-                  onChange={({ target }) =>
-                    handleChangeFieldName(idx, target.value)
-                  }
-                />
-              </Form.Group>
-              <Form.Group as={Col}>
-                <Form.Label className="label">Type</Form.Label>
-                <Form.Select
-                  name="type"
-                  required
-                  value={field.type}
-                  onChange={(e) => handleChangeFieldType(idx, e.target.value)}
-                >
-                  <option value="id">id</option>
-                  <option value="number">Number</option>
-                  <option value="string">String</option>
-                  <option value="oneof">One of</option>
-                  <option value="object">Object</option>
-                </Form.Select>
-              </Form.Group>
-              {
-                <RenderComponent
-                  Elem={typesToComponents[field.type]}
-                  onChange={(key, val) =>
-                    handleChangeFieldAdditional(idx, key, val)
-                  }
-                />
-              }
-              <RemoveCol>
-                <MdRemoveCircleOutline onClick={() => handleRemoveField(idx)} />
-              </RemoveCol>
-            </$Row>
+            <Field
+              key={idx}
+              id={idx}
+              field={field}
+              onChangeName={handleChangeFieldName}
+              onChangeType={handleChangeFieldType}
+              onChangeAdditional={handleChangeFieldAdditional}
+              onRemove={handleRemoveField}
+            />
           ))}
         </Form>
       </Container>
