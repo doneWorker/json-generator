@@ -34,14 +34,10 @@ const RemoveCol = styled(Col)`
   color: #ff5555;
 `;
 
-const Field = ({
-  id,
-  field,
-  onChangeName,
-  onChangeType,
-  onChangeAdditional,
-  onRemove,
-}) => {
+const Field = (props) => {
+  const { field, onChangeName, onChangeType, onChangeAdditional, onRemove } =
+    props;
+
   return (
     <$Row>
       <Form.Group as={Col}>
@@ -51,7 +47,7 @@ const Field = ({
           name="name"
           required
           value={field.name}
-          onChange={({ target }) => onChangeName(id, target.value)}
+          onChange={({ target }) => onChangeName(field.id, target.value)}
         />
       </Form.Group>
       <Form.Group as={Col}>
@@ -60,7 +56,7 @@ const Field = ({
           name="type"
           required
           value={field.type}
-          onChange={(e) => onChangeType(id, e.target.value)}
+          onChange={(e) => onChangeType(field.id, e.target.value)}
         >
           <option value="id">id</option>
           <option value="number">Number</option>
@@ -72,12 +68,16 @@ const Field = ({
       {
         <RenderComponent
           Elem={typesToComponents[field.type]}
-          onChange={(key, val) => onChangeAdditional(id, key, val)}
+          onChange={(key, val) => onChangeAdditional(field.id, key, val)}
         />
       }
       <RemoveCol>
-        <MdRemoveCircleOutline onClick={() => onRemove(id)} />
+        <MdRemoveCircleOutline onClick={() => onRemove(field.id)} />
       </RemoveCol>
+      {field.children !== undefined &&
+        field.children.map((field) => (
+          <Field key={field.id} {...props} field={field} />
+        ))}
     </$Row>
   );
 };

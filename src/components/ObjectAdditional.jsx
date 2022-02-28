@@ -6,10 +6,10 @@ const $Col = styled(Form.Group)`
   align-items: end;
 `;
 
-const ObjectAdditional = () => {
+const ObjectAdditional = ({ onChange }) => {
   return (
     <$Col as={Col}>
-      <Button>Add field</Button>
+      <Button onClick={() => onChange("add-to-object")}>Add field</Button>
     </$Col>
   );
 };

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Container, Col, Row, Form, Button } from "react-bootstrap";
 import styled from "styled-components";
+import { nanoid } from "nanoid";
 
 import generate from "./generate";
 import ResultModal from "./components/ResultModal";
@@ -16,12 +17,12 @@ const Header = styled.header`
   flex-grow: 0;
 `;
 
-const defaultField = { name: "", type: "id" };
+const createDefaultField = () => ({ name: "", type: "id", id: nanoid() });
 
 const GeneratorPage = () => {
   const [state, setState] = useState({
     total: 0,
-    fields: [defaultField],
+    fields: [createDefaultField()],
   });
 
   const [generatedJSON, setGeneratedJSON] = useState("");
@@ -31,35 +32,55 @@ const GeneratorPage = () => {
   const handleAddNewField = () => {
     setState((prev) => ({
       ...prev,
-      fields: [...prev.fields, defaultField],
+      fields: [...prev.fields, createDefaultField()],
     }));
   };
 
   const handleChangeFieldType = (id, type) => {
     setState((prev) => ({
       ...prev,
-      fields: prev.fields.map((field, idx) =>
-        idx === id ? { name: field.name, type } : field
+      fields: prev.fields.map((field) =>
+        field.id === id ? { name: field.name, type } : field
       ),
     }));
   };
 
+  // TODO: decompose
   const handleChangeFieldAdditional = (id, key, val) => {
-    setState((prev) => ({
-      ...prev,
-      fields: prev.fields.map((field, idx) =>
-        idx === id ? { ...field, [key]: val } : field
-      ),
-    }));
+    setState((prev) => {
+      const addFieldKey = "add-to-object";
+
+      const changeKeyMapper = (field) =>
+        field.id === id ? { ...field, [key]: val } : field;
+
+      const addFieldMapper = (field) =>
+        field.id === id
+          ? {
+              ...field,
+              children: field.children
+                ? [...field.children, createDefaultField()]
+                : [createDefaultField()],
+            }
+          : field;
+
+      const mapper = key === addFieldKey ? addFieldMapper : changeKeyMapper;
+
+      return {
+        ...prev,
+        fields: prev.fields.map(mapper),
+      };
+    });
   };
 
   const handleChangeFieldName = (id, name) => {
-    setState((prev) => ({
-      ...prev,
-      fields: prev.fields.map((field, idx) =>
-        idx === id ? { ...field, name } : field
-      ),
-    }));
+    setState((prev) => {
+      return {
+        ...prev,
+        fields: prev.fields.map((field) =>
+          field.id === id ? { ...field, name } : field
+        ),
+      };
+    });
   };
 
   const handleTotalChange = (total) => {
@@ -69,7 +90,7 @@ const GeneratorPage = () => {
   const handleRemoveField = (id) => {
     setState((prev) => ({
       ...prev,
-      fields: prev.fields.filter((f, idx) => idx !== id),
+      fields: prev.fields.filter((field) => field.id !== id),
     }));
   };
 
@@ -107,10 +128,9 @@ const GeneratorPage = () => {
       </Header>
       <Container>
         <Form>
-          {state.fields.map((field, idx) => (
+          {state.fields.map((field) => (
             <Field
-              key={idx}
-              id={idx}
+              key={field.id}
               field={field}
               onChangeName={handleChangeFieldName}
               onChangeType={handleChangeFieldType}
