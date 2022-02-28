@@ -10,7 +10,10 @@ const generateNumber = (min, max) => random(min, max);
 const generateString = (paragraph) =>
   loremIpsum({ count: paragraph, units: "paragraph" });
 
-const generateOneOf = (list) => list.split(",")[random(0, list.length - 1)];
+const generateOneOf = (list) => {
+  const arr = list.split(",");
+  return arr[random(0, arr.length - 1)];
+};
 
 const generateField = (params) => {
   const { type } = params;
