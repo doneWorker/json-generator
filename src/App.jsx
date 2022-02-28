@@ -9,6 +9,7 @@ import ResultModal from "./components/ResultModal";
 import Field from "./components/Field";
 
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./index.css";
 
 /* Styled */
 const Header = styled.header`
@@ -119,7 +120,7 @@ const GeneratorPage = () => {
                 name="value"
                 placeholder="Total records"
                 required
-                value={state.total > 0 ? state.total : null}
+                value={state.total > 0 ? state.total : ""}
                 onChange={(e) => handleTotalChange(parseInt(e.target.value))}
               />
             </Form.Group>

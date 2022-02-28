@@ -17,10 +17,15 @@ const typesToComponents = {
 };
 
 const $Row = styled(Row)`
-  padding: 5px 0;
-  margin: 5px 0;
-  border: 1px solid #ccc;
+  padding: 10px 0;
+  margin: 15px 0;
   background: white;
+
+  .nested-fields {
+    flex-shrink: 1;
+    margin: 10px;
+    border-left: 5px solid var(--bs-blue);
+  }
 `;
 
 const RemoveCol = styled(Col)`
@@ -74,10 +79,13 @@ const Field = (props) => {
       <RemoveCol>
         <MdRemoveCircleOutline onClick={() => onRemove(field.id)} />
       </RemoveCol>
-      {field.children !== undefined &&
-        field.children.map((field) => (
-          <Field key={field.id} {...props} field={field} />
-        ))}
+      {field.children !== undefined && (
+        <div className="nested-fields">
+          {field.children.map((field) => (
+            <Field key={field.id} {...props} field={field} />
+          ))}
+        </div>
+      )}
     </$Row>
   );
 };
