@@ -19,7 +19,7 @@ const generateNumber = ({ min, max }) => random(min, max);
 const generateString = ({ paragraph }) =>
   loremIpsum({ count: paragraph, units: "paragraph" });
 
-const generateOneOf = (list) => {
+const generateOneOf = ({ list }) => {
   const arr = list.split(",");
   return arr[random(0, arr.length - 1)];
 };
@@ -37,17 +37,6 @@ const generateField = (params) => {
   };
 
   const val = typesToFunc[type](params);
-
-  // const val =
-  //   type === "number"
-  //     ? generateNumber(params.min, params.max)
-  //     : type === "string"
-  //     ? generateString(params.paragraph)
-  //     : type === "oneof"
-  //     ? generateOneOf(params.list)
-  //     : type === "id"
-  //     ? generateId()
-  //     : null;
 
   return [name, val];
 };

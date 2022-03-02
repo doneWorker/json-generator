@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { Modal, Button } from "react-bootstrap";
+
 import { FaCopy } from "react-icons/fa";
 
 const ResultModal = ({ generatedJSON, isOpen, onClose }) => {
@@ -15,7 +16,7 @@ const ResultModal = ({ generatedJSON, isOpen, onClose }) => {
         setIsCopied(false);
       }
     );
-  }, []);
+  }, [generatedJSON]);
 
   return (
     <Modal scrollable show={isOpen} onHide={onClose}>

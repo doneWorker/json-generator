@@ -17,13 +17,13 @@ const typesToComponents = {
 };
 
 const $Row = styled(Row)`
-  padding: 10px 0;
+  padding: 20px 0;
   margin: 15px 0;
   background: white;
 
   .nested-fields {
     flex-shrink: 1;
-    margin: 10px;
+    margin: 10px 0 10px 10px;
     border-left: 5px solid var(--bs-blue);
   }
 `;
@@ -46,17 +46,16 @@ const Field = (props) => {
   return (
     <$Row>
       <Form.Group as={Col}>
-        <Form.Label className="label">Field's name</Form.Label>
         <Form.Control
           type="text"
           name="name"
+          placeholder="Field's name"
           required
           value={field.name}
           onChange={({ target }) => onChangeName(field.id, target.value)}
         />
       </Form.Group>
       <Form.Group as={Col}>
-        <Form.Label className="label">Type</Form.Label>
         <Form.Select
           name="type"
           required

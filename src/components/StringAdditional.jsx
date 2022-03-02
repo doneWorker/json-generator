@@ -4,10 +4,10 @@ const StringAdditional = ({ totalParagraph, onChange }) => {
   return (
     <>
       <Form.Group as={Col}>
-        <Form.Label className="label">Total paragraphs</Form.Label>
         <Form.Control
           type="number"
           name="value"
+          placeholder="Total paragraphs"
           required
           value={totalParagraph}
           onChange={({ target }) =>
