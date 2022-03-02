@@ -1,23 +1,15 @@
 import { useState } from "react";
 import { cloneDeep } from "lodash";
-import { Container, Col, Row, Form, Button } from "react-bootstrap";
-import styled from "styled-components";
+import { Container, Form } from "react-bootstrap";
 import { nanoid } from "nanoid";
 
 import generate from "./generate";
+import Header from "./components/Header";
 import ResultModal from "./components/ResultModal";
 import Field from "./components/Field";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
-
-/* Styled */
-const Header = styled.header`
-  height: 50px;
-  display: flex;
-  align-items: center;
-  flex-grow: 0;
-`;
 
 /* Helpers */
 const findField = (fields, id) => {
@@ -109,38 +101,19 @@ const GeneratorPage = () => {
     });
   };
 
+  const handleRun = () => {
+    setGeneratedJSON(generate(state));
+    setModalIsOpen(true);
+  };
+
   return (
     <main>
-      <Header>
-        <Container>
-          <Row>
-            <Form.Group as={Col} xs={2}>
-              <Form.Control
-                type="number"
-                name="value"
-                placeholder="Total records"
-                required
-                value={state.total > 0 ? state.total : ""}
-                onChange={(e) => handleTotalChange(parseInt(e.target.value))}
-              />
-            </Form.Group>
-            <Col>
-              <Button onClick={handleAddNewField} style={{ marginRight: 10 }}>
-                + Add new field
-              </Button>
-              <Button
-                variant="primary"
-                onClick={() => {
-                  setGeneratedJSON(generate(state));
-                  setModalIsOpen(true);
-                }}
-              >
-                Run!
-              </Button>
-            </Col>
-          </Row>
-        </Container>
-      </Header>
+      <Header
+        total={state.total}
+        onTotalChange={handleTotalChange}
+        onAddNewField={handleAddNewField}
+        onRun={handleRun}
+      />
       <Container>
         <Form>
           {state.fields.map((field) => (
