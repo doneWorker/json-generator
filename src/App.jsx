@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { cloneDeep } from "lodash";
 import { Container, Form } from "react-bootstrap";
-import { nanoid } from "nanoid";
 
 import generate from "./generate";
+import { findField, removeField, createDefaultField } from "./helpers";
 import Header from "./components/Header";
 import Field from "./components/Field";
 import ResultModal from "./components/ResultModal";
@@ -11,31 +11,6 @@ import WelcomeModal from "./components/WelcomeModal";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
-
-/* Helpers */
-const findField = (fields, id) => {
-  for (let field of fields) {
-    if (field.id === id) return field;
-
-    if (field.children) {
-      const result = findField(field.children, id);
-      if (result) return result;
-    }
-  }
-};
-
-const removeField = (fields, id) => {
-  for (let index in fields) {
-    if (fields[index].id === id) {
-      fields.splice(index, 1);
-      return;
-    } else if (fields[index].children) {
-      removeField(fields[index].children, id);
-    }
-  }
-};
-
-const createDefaultField = () => ({ name: "", type: "id", id: nanoid() });
 
 /* Page */
 const GeneratorPage = () => {
@@ -45,7 +20,6 @@ const GeneratorPage = () => {
   });
 
   const [generatedJSON, setGeneratedJSON] = useState("");
-
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [welcomeIsOpen, setWelcomeIsOpen] = useState(true);
 
@@ -100,6 +74,7 @@ const GeneratorPage = () => {
     setState((prev) => {
       const newState = cloneDeep(prev);
       removeField(newState.fields, id);
+
       return newState;
     });
   };
