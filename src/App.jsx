@@ -5,8 +5,9 @@ import { nanoid } from "nanoid";
 
 import generate from "./generate";
 import Header from "./components/Header";
-import ResultModal from "./components/ResultModal";
 import Field from "./components/Field";
+import ResultModal from "./components/ResultModal";
+import WelcomeModal from "./components/WelcomeModal";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
@@ -36,6 +37,7 @@ const removeField = (fields, id) => {
 
 const createDefaultField = () => ({ name: "", type: "id", id: nanoid() });
 
+/* Page */
 const GeneratorPage = () => {
   const [state, setState] = useState({
     total: 0,
@@ -45,6 +47,7 @@ const GeneratorPage = () => {
   const [generatedJSON, setGeneratedJSON] = useState("");
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [welcomeIsOpen, setWelcomeIsOpen] = useState(true);
 
   const handleAddNewField = () => {
     setState((prev) => {
@@ -132,6 +135,10 @@ const GeneratorPage = () => {
         isOpen={modalIsOpen}
         generatedJSON={generatedJSON}
         onClose={() => setModalIsOpen(false)}
+      />
+      <WelcomeModal
+        isOpen={welcomeIsOpen}
+        onClose={() => setWelcomeIsOpen(false)}
       />
     </main>
   );
