@@ -15,12 +15,12 @@ const Header = ({ total, onTotalChange, onAddNewField, onRun }) => (
   <$Header>
     <Container>
       <Row>
-        <Col xs={2}>
+        <Col xs={5} md={2}>
           <Button onClick={onAddNewField} style={{ marginRight: 10 }}>
             + Add new field
           </Button>
         </Col>
-        <Form.Group as={Col} xs={{ span: 2, offset: 6 }}>
+        <Form.Group as={Col} xs={4} md={{ span: 2, offset: 6 }}>
           <Form.Control
             type="number"
             name="value"

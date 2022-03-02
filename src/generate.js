@@ -1,13 +1,22 @@
 import { nanoid } from "nanoid";
 import { loremIpsum } from "lorem-ipsum";
+import { uniqueNamesGenerator, names } from "unique-names-generator";
 
 const random = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 const generateId = () => nanoid();
 
-const generateNumber = (min, max) => random(min, max);
+const generateName = () =>
+  uniqueNamesGenerator({
+    dictionaries: [names, names],
+    separator: " ",
+    length: 2,
+    style: "capital",
+  });
 
-const generateString = (paragraph) =>
+const generateNumber = ({ min, max }) => random(min, max);
+
+const generateString = ({ paragraph }) =>
   loremIpsum({ count: paragraph, units: "paragraph" });
 
 const generateOneOf = (list) => {
@@ -19,16 +28,26 @@ const generateField = (params) => {
   const { type } = params;
   const { name } = params;
 
-  const val =
-    type === "number"
-      ? generateNumber(params.min, params.max)
-      : type === "string"
-      ? generateString(params.paragraph)
-      : type === "oneof"
-      ? generateOneOf(params.list)
-      : type === "id"
-      ? generateId()
-      : null;
+  const typesToFunc = {
+    number: generateNumber,
+    string: generateString,
+    oneof: generateOneOf,
+    name: generateName,
+    id: generateId,
+  };
+
+  const val = typesToFunc[type](params);
+
+  // const val =
+  //   type === "number"
+  //     ? generateNumber(params.min, params.max)
+  //     : type === "string"
+  //     ? generateString(params.paragraph)
+  //     : type === "oneof"
+  //     ? generateOneOf(params.list)
+  //     : type === "id"
+  //     ? generateId()
+  //     : null;
 
   return [name, val];
 };

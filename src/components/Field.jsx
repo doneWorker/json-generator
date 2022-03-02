@@ -68,6 +68,7 @@ const Field = (props) => {
           <option value="string">String</option>
           <option value="oneof">One of</option>
           <option value="object">Object</option>
+          <option value="name">Name</option>
         </Form.Select>
       </Form.Group>
       {
