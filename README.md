@@ -1,8 +1,10 @@
 # JSON Generator
 
+Link: https://doneWorker.github.io/json-generator
+
 # About
 
-This mini application help you to create a json array of data
+This page helps you to create a json array of data
 
 # Libraries
 
